@@ -76,7 +76,7 @@ export default function App() {
   return (
     <div className="app">
       <aside className="sidebar">
-        <div className="brand" onClick={() => go('overview')} style={{ cursor: 'pointer' }}>
+          <div className="brand" onClick={() => go('overview')} style={{ cursor: 'pointer' }}>
           <span className="brand-name">PRAMANA</span>
           <span className="brand-dev">प्रमाण</span>
         </div>

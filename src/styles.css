@@ -108,7 +108,10 @@ code { font-family: var(--mono); font-size: 0.9em; color: var(--fg-body); }
   gap: 9px;
   padding: 0 22px;
   border-bottom: 1px solid var(--rail-border);
+  cursor: pointer;
+  user-select: none;
 }
+.brand:hover .brand-name { color: var(--ac-bright); }
 .brand-name { font-size: 16px; font-weight: 700; letter-spacing: 0.16em; color: #fff; }
 .brand-dev { font-size: 14px; color: var(--rail-fg-dim); }
 
