@@ -62,18 +62,18 @@ export const lots = [
 ]
 
 export const ledgerEntries = [
-  { pos: 88209, kind: 'battery_commit', label: 'Test battery A + B digests committed', utc: '2026-09-11T06:00:00Z', digest: 'sha256:3f9c…a17d', beforeArtefact: true },
-  { pos: 88210, kind: 'taxonomy_commit', label: 'Attack taxonomy digest committed', utc: '2026-09-11T06:00:04Z', digest: 'sha256:71ab…9e30', beforeArtefact: true },
-  { pos: 88211, kind: 'admission', label: 'Artefact admitted — read-only custody', utc: '2026-09-17T09:14:22Z', digest: 'sha256:11c9…8ab2', beforeArtefact: false },
-  { pos: 88212, kind: 'conversion', label: 'INT8 PTQ rung produced (onnxruntime.qdq)', utc: '2026-09-17T09:31:05Z', digest: 'sha256:77d1…04fe', beforeArtefact: false },
-  { pos: 88213, kind: 'finding', label: 'F-1 recorded — trigger reversal at int8_ptq, class 14', utc: '2026-09-17T10:47:51Z', digest: 'sha256:d2f0…5c88', beforeArtefact: false },
-  { pos: 88214, kind: 'disposition', label: 'CONDITIONAL_RELEASE — risk accepted by named authority', utc: '2026-09-17T11:02:44Z', digest: 'sha256:a1e4…77b3', beforeArtefact: false },
+  { pos: 88209, kind: 'battery_commit', label: 'Test battery A + B digests committed', utc: '2026-09-05T06:00:00Z', digest: 'sha256:3f9c…a17d', beforeArtefact: true },
+  { pos: 88210, kind: 'taxonomy_commit', label: 'Attack taxonomy digest committed', utc: '2026-09-05T06:00:04Z', digest: 'sha256:71ab…9e30', beforeArtefact: true },
+  { pos: 88211, kind: 'admission', label: 'Artefact admitted — read-only custody', utc: '2026-09-11T09:14:22Z', digest: 'sha256:11c9…8ab2', beforeArtefact: false },
+  { pos: 88212, kind: 'conversion', label: 'INT8 PTQ rung produced (onnxruntime.qdq)', utc: '2026-09-11T09:31:05Z', digest: 'sha256:77d1…04fe', beforeArtefact: false },
+  { pos: 88213, kind: 'finding', label: 'F-1 recorded — trigger reversal at int8_ptq, class 14', utc: '2026-09-12T10:47:51Z', digest: 'sha256:d2f0…5c88', beforeArtefact: false },
+  { pos: 88214, kind: 'disposition', label: 'CONDITIONAL_RELEASE — risk accepted by named authority', utc: '2026-09-12T11:02:44Z', digest: 'sha256:a1e4…77b3', beforeArtefact: false },
 ]
 
 export const report = {
   $schema: 'https://pramana.local/schema/assurance-report/1.0.json',
-  report_id: 'PRM-2026-0917-0042',
-  issued_utc: '2026-09-17T12:00:00Z',
+  report_id: 'PRM-2026-0912-0042',
+  issued_utc: '2026-09-12T12:00:00Z',
 
   assessment: { tier: 'T2', access_tier: 'A2', turnaround: { triage_s: 214, full_s: 41880 } },
 
@@ -81,7 +81,7 @@ export const report = {
     generation: 7,
     battery_a_digest: 'sha256:3f9c…a17d',
     battery_b_digest: 'sha256:be02…4c81',
-    committed_at_utc: '2026-09-11T06:00:00Z',
+    committed_at_utc: '2026-09-05T06:00:00Z',
     committed_before_artefact_receipt: true,
     battery_b_opened: false,
     taxonomy_digest: 'sha256:71ab…9e30',
@@ -309,14 +309,14 @@ export const report = {
 
   disposition: {
     state: 'CONDITIONAL_RELEASE',
-    expires_utc: '2026-12-16T00:00:00Z',
+    expires_utc: '2026-12-11T00:00:00Z',
     rationale: 'Concentrated divergence confirmed at INT8 on class 14, with an operational need asserted for the capability delivered under lots 1 to 3.',
     compensating_controls: [
       'class 14 predictions routed to human confirmation',
       'INT8 build withdrawn; FP32 torchscript build deployed pending re-conversion',
       'F-1 indicator armed on the live receipt stream',
     ],
-    risk_accepted_by: { authority: 'Programme Director, Acquisition Authority', identity_ref: 'cert:…', utc: '2026-09-17T11:02:44Z' },
+    risk_accepted_by: { authority: 'Programme Director, Acquisition Authority', identity_ref: 'cert:…', utc: '2026-09-12T11:02:44Z' },
     reassessment_triggers: ['battery_generation_change', 'ioc_match_on_receipt_stream', 'drift_alarm_source_any', 'source_fdr_finding_lot4'],
   },
 
@@ -330,7 +330,7 @@ export const report = {
       anchor_procedure: 'rfc3161_tsa',
       anchor_state: 'anchored',
       token_digest: 'sha256:0f2b…9c14',
-      anchor_utc: '2026-09-17T12:00:00Z',
+      anchor_utc: '2026-09-12T12:00:00Z',
       anchor_lag_s: 3468,
       verifiable_offline: true,
       defeats: ['retroactive alteration that a third party could not detect'],

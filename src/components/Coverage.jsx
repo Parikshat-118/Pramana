@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {
-  PageHead, Section, Sub, Status, Metrics, Metric, DL, Ev, Notice, Term,
+  PageHead, Section, Block, Status, Metrics, Metric, DL, Ev, Callout, Term,
 } from './ui.jsx'
 import { report } from '../data/report.js'
 
@@ -108,16 +108,15 @@ export default function Coverage() {
                 <Status kind="crit" strike key={f}>{f}</Status>
               ))}
             </div>
-            <Notice>
+            <Callout label="Why no pass verdict exists">
               Goldwasser, Kim, Vaikuntanathan and Zamir{' '}
               <a href="https://arxiv.org/abs/2204.06974" target="_blank" rel="noreferrer">construct
-              backdoors</a> that no efficient black-box test can detect, so no battery, reference
-              population or quantity of sampling can rule one out. A pass verdict would assert
-              something provably unestablishable; absence of evidence is the strongest true
-              statement available, and the only form this system emits.
-            </Notice>
+              backdoors</a> no efficient black-box test can detect, so no battery, reference
+              population or quantity of sampling rules one out. Absence of evidence is the
+              strongest true statement available, and the only form this system emits.
+            </Callout>
           </div>
-          <Sub title="Rungs with no finding" meta={`${report.verdict_statement.rungs_with_no_finding.length} rungs`}>
+          <Block title="Rungs with no finding" meta={`${report.verdict_statement.rungs_with_no_finding.length} rungs`}>
             <div className="table-wrap">
               <table>
                 <thead><tr><th>Rung</th><th style={{ width: 130 }}>Result</th></tr></thead>
@@ -139,7 +138,7 @@ export default function Coverage() {
               The statement is scoped to the rungs where nothing fired and names them, rather than
               covering the artefact as a whole.
             </p>
-          </Sub>
+          </Block>
         </div>
       </Section>
 
@@ -173,7 +172,7 @@ export default function Coverage() {
               </tbody>
             </table>
           </div>
-          <Sub title="Self-limiting fields" meta="3 recorded">
+          <Block title="Self-limiting fields" meta="3 recorded">
             <Ev label="family_delta_exceeds_ceiling" value="true" tone="warn"
               note="Measured 0.88 against a ceiling of 0.50 fixed in advance — reuse on another model family is refused" />
             <Ev label="detection_p_is_floor" value="true" tone="warn"
@@ -184,7 +183,7 @@ export default function Coverage() {
               Each of these narrows what may be done with the result next, in a document that would
               otherwise be free not to mention it.
             </p>
-          </Sub>
+          </Block>
         </div>
         <DL left rows={[
           ['Sum check', <><span className="id">{D.sum_check.expression}</span> = {D.sum_check.value} = {D.axes_total}</>],

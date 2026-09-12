@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import {
-  PageHead, Section, Sub, Status, Metrics, Metric, DL, Bar, Notice, Toolbar, Term,
+  PageHead, Section, Block, Status, Metrics, Metric, DL, Bar, Callout, Toolbar, Term,
 } from './ui.jsx'
 import { report } from '../data/report.js'
 
@@ -72,7 +72,7 @@ export default function Disposition({ monitor, setMonitor }) {
           tone={crossed ? 'crit' : 'warn'} sm
           context={crossed
             ? <>Moved by the monitor, not by a new assessment</>
-            : <>Expires 16 Dec 2026 · 3 controls</>}
+            : <>Expires 11 Dec 2026 · 3 controls</>}
         />
         <Metric
           label="Monitor value" value={e.toFixed(1)} tone={crossed ? 'crit' : 'ok'}
@@ -91,13 +91,12 @@ export default function Disposition({ monitor, setMonitor }) {
       </Metrics>
 
       {crossed && (
-        <Notice kind="crit">
-          <b>Certificate state changed — re-assessment required.</b> Nothing was retrained and no
-          new assessment was run. A signed certificate moved to QUARANTINE on its own, and the
-          named authority's risk acceptance moved with it:{' '}
-          <span className="id">risk_acceptance: REVOKED</span> is now a row in the ledger with the
-          monitor value that caused it attached.
-        </Notice>
+        <Callout kind="crit" label="Certificate state changed · re-assessment required">
+          Nothing was retrained and no new assessment was run. A signed certificate moved to
+          QUARANTINE on its own, and the named authority's risk acceptance moved with it —{' '}
+          <span className="id">risk_acceptance: REVOKED</span> is now a ledger row carrying the
+          monitor value that caused it.
+        </Callout>
       )}
 
       <Section title="State lattice" meta="5 states">
@@ -152,7 +151,7 @@ export default function Disposition({ monitor, setMonitor }) {
               ['Detection delay bound', <span className="mute">not stated — bounded by a distribution-free power ceiling</span>],
             ]} />
           </div>
-          <Sub title={crossed ? 'Risk acceptance — revoked' : 'Risk acceptance'}>
+          <Block title={crossed ? 'Risk acceptance — revoked' : 'Risk acceptance'}>
             <DL rows={[
               ['State', crossed
                 ? <Status kind="crit">revoked</Status>
@@ -160,11 +159,11 @@ export default function Disposition({ monitor, setMonitor }) {
               ['Authority', DISP.risk_accepted_by.authority],
               ['Accepted', <span className="id">{DISP.risk_accepted_by.utc}</span>],
               ['Expiry', crossed
-                ? <span className="id" style={{ color: 'var(--crit)', textDecoration: 'line-through' }}>{DISP.expires_utc}</span>
+                ? <span className="id" style={{ color: 'var(--cr)', textDecoration: 'line-through' }}>{DISP.expires_utc}</span>
                 : <span className="id">{DISP.expires_utc}</span>],
             ]} />
             <p className="section-note" style={{ marginTop: 12, marginBottom: 0 }}>{DISP.rationale}</p>
-          </Sub>
+          </Block>
         </div>
       </Section>
 
@@ -173,7 +172,7 @@ export default function Disposition({ monitor, setMonitor }) {
           <ol className="ol">
             {DISP.compensating_controls.map(c => <li key={c}>{c}</li>)}
           </ol>
-          <Sub title="Re-assessment triggers" meta={`${DISP.reassessment_triggers.length} armed`}>
+          <Block title="Re-assessment triggers" meta={`${DISP.reassessment_triggers.length} armed`}>
             <div className="table-wrap">
               <table>
                 <thead><tr><th>Trigger</th><th style={{ width: 100 }}>State</th></tr></thead>
@@ -201,7 +200,7 @@ export default function Disposition({ monitor, setMonitor }) {
               The default release level discloses nothing. Widening it is an act by a named
               authority, recorded in the chain like any other.
             </p>
-          </Sub>
+          </Block>
         </div>
       </Section>
     </>

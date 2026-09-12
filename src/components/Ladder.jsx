@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
-  PageHead, Section, Sub, Status, Metrics, Metric, DL, Ev, Bar, Notice, Toolbar, Ref, Term, Legend,
+  PageHead, Section, Block, Status, Metrics, Metric, DL, Ev, Bar, Callout, Toolbar, Ref, Term,
+  Legend, Probes, DivergenceChart,
 } from './ui.jsx'
 import { report, classDivergence, classDivergenceFp32 } from '../data/report.js'
 
@@ -13,45 +14,6 @@ const RUNGS = [
   { id: 'int8_ptq', pair: 'fp32→int8_ptq', role: 'Deployment build' },
   { id: 'int8_vendor_claimed', pair: 'int8_ptq→int8_vendor_claimed', role: 'Delivered, not deployed' },
 ]
-
-/** Diverging probe indices are fixed, not sampled, so the view is reproducible. */
-const HOT = [7, 23, 31, 58, 74, 96, 112, 133, 151, 178, 194]
-
-function Probes({ diverging, total }) {
-  const hot = new Set(HOT.slice(0, diverging))
-  return (
-    <div className="probes">
-      {Array.from({ length: total }, (_, i) => (
-        <i key={i} className={hot.has(i) ? 'hit' : undefined} />
-      ))}
-    </div>
-  )
-}
-
-function Chart({ data }) {
-  const max = Math.max(...data.map(d => d.divergence), 0.05)
-  return (
-    <>
-      <div className="chart">
-        {data.map(d => (
-          <div className="chart-col" key={d.cls}
-            title={`Class ${d.cls} — ${d.name}\nDivergence ${d.divergence.toFixed(3)}`}>
-            <i
-              className={d.divergence >= 0.3 ? 'hi' : d.divergence >= 0.1 ? 'mid' : undefined}
-              style={{ height: `${(d.divergence / max) * 100}%` }}
-            />
-            {d.divergence >= 0.3 && <span className="chart-tag">{d.cls}</span>}
-          </div>
-        ))}
-      </div>
-      <div className="chart-axis">
-        <span className="id">cls 0</span>
-        <span>43 output classes</span>
-        <span className="id">cls 42</span>
-      </div>
-    </>
-  )
-}
 
 export default function Ladder() {
   const [step, setStep] = useState(4)      // 0 = none assessed, 4 = all rungs assessed
@@ -128,32 +90,30 @@ export default function Ladder() {
       </Metrics>
 
       {step >= 1 && step < 3 && (
-        <Notice kind="ok">
-          <b>FP32 assessed — no finding.</b> Accuracy 96.8%, fingerprint within the reference band,
-          no reversal outlier. A pipeline that verifies hashes and signatures on the delivered file
-          stops here.
-        </Notice>
+        <Callout kind="ok" label="FP32 assessed — no finding">
+          Accuracy 96.8%, fingerprint within the reference band, no reversal outlier. A pipeline
+          that verifies hashes and signatures on the delivered file stops here.
+        </Callout>
       )}
       {live && (
-        <Notice kind="warn">
-          <b>Detection fires at int8_ptq.</b> 11 of 200 probes diverge, {stopCls.probesDiverging} of
-          them on class 14 (STOP) and 3 on class 17. Concentration 0.91 against an operating point
-          of 0.70.
-        </Notice>
+        <Callout kind="warn" label="Detection fires at int8_ptq">
+          11 of 200 probes diverge, {stopCls.probesDiverging} on class 14 (STOP) and 3 on class 17.
+          Concentration 0.91 against an operating point of 0.70.
+        </Callout>
       )}
 
-      <Section title="Rungs" meta={`${L.rungs_assessed.length} assessed`}>
-        <div className="table-wrap">
+      <Section title="Rungs" meta={`${L.rungs_assessed.length} assessed`} flush>
+        <div className="scroll-x">
           <table>
             <thead>
               <tr>
-                <th style={{ width: 170 }}>Rung</th>
-                <th style={{ width: 175 }}>Role</th>
-                <th style={{ width: 180 }}>Comparison</th>
+                <th style={{ width: 172 }}>Rung</th>
+                <th style={{ width: 176 }}>Role</th>
+                <th style={{ width: 182 }}>Comparison</th>
                 <th>Probe divergence</th>
-                <th style={{ width: 90 }} className="t-num">Probes</th>
-                <th style={{ width: 90 }} className="t-num">p</th>
-                <th style={{ width: 150 }}>Result</th>
+                <th style={{ width: 92 }} className="t-num">Probes</th>
+                <th style={{ width: 96 }} className="t-num">p</th>
+                <th style={{ width: 152 }}>Result</th>
               </tr>
             </thead>
             <tbody>
@@ -208,19 +168,19 @@ export default function Ladder() {
       >
         <div className="cols cols-2-1">
           <div>
-            <Chart data={live ? classDivergence : classDivergenceFp32} />
+            <DivergenceChart data={live ? classDivergence : classDivergenceFp32} axis />
             <div style={{ marginTop: 14 }}>
               <Legend items={[
-                ['#d99a1c', 'dominant class'],
-                ['#e5c47a', 'secondary'],
-                ['var(--line-strong)', 'within normal variation'],
+                ['var(--wn-solid)', 'dominant class'],
+                ['#eeba6a', 'secondary'],
+                ['var(--border-2)', 'within normal variation'],
               ]} />
             </div>
           </div>
-          <Sub title="Probe bank" meta="sealed before receipt">
-            <Probes diverging={live ? 11 : 0} total={200} />
-            <div style={{ margin: '12px 0' }}>
-              <Legend items={[['#d99a1c', 'diverges'], ['var(--bg-sunken)', 'agrees']]} />
+          <Block title="Probe bank" meta="sealed before receipt">
+            <Probes diverging={live ? 11 : 0} />
+            <div style={{ margin: '12px 0 16px' }}>
+              <Legend items={[['var(--wn-solid)', 'diverges'], ['var(--sunken)', 'agrees']]} />
             </div>
             <DL rows={[
               ['Battery A', <Ref value={report.battery.battery_a_digest}>{report.battery.battery_a_digest}</Ref>],
@@ -229,7 +189,7 @@ export default function Ladder() {
               ['Before receipt', <Status kind="ok">true</Status>],
               ['Probes traverse', 'deployed preprocessing chain'],
             ]} />
-          </Sub>
+          </Block>
         </div>
       </Section>
 
@@ -252,24 +212,24 @@ export default function Ladder() {
                 </tbody>
               </table>
             </div>
-            <Notice>
-              <b>The report constrains its own issuer.</b> Transfer to another model family measured
-              at 0.88 against a ceiling of 0.50 fixed in advance, so reuse of this reference
-              population on another family is refused:{' '}
-              <span className="id">assessment_unavailable: no_fitted_null</span>.
-            </Notice>
+            <Callout label="Reuse refused">
+              Transfer to another model family measured at 0.88 against a ceiling of 0.50 fixed in
+              advance. Reuse of this reference population on another family returns{' '}
+              <span className="id">assessment_unavailable: no_fitted_null</span> rather than a
+              number.
+            </Callout>
           </div>
           <div>
-            <Sub title="p-value floors">
+            <Block title="p-value floors">
               <Ev label={<><Term id="pfloor">Detection floor</Term>, one test</>} value="0.01538" note="1/(64+1) at α = 0.05" />
               <Ev label="Localisation floor, pooled" value="0.00036" note="1/(64×43+1)" />
               <Ev label="Smallest BH critical value" value="0.00116" note="α/43 — the floor sits 3.2× below it" />
-            </Sub>
-            <Sub title="Transfer ceiling">
+            </Block>
+            <Block title="Transfer ceiling">
               <Ev label="Corpus delta" value="0.31" tone="ok" note="Against ceiling 0.50" />
               <Ev label="Family delta" value="0.88" tone="warn" note="Exceeds ceiling — reuse refused" />
               <Ev label="Affects this report" value="No" tone="ok" note="Artefact matches the fitted family and corpus exactly" />
-            </Sub>
+            </Block>
           </div>
         </div>
       </Section>
@@ -291,12 +251,11 @@ export default function Ladder() {
           <div>
             <Ev label="Divergence, int8_ptq → int8_vendor" value="3 / 200" note="p = 0.28 against floor 0.01538" />
             <Ev label="Result" value="No finding" tone="ok" />
-            <p className="section-note" style={{ marginTop: 12, marginBottom: 0 }}>
-              Both INT8 builds were produced from the same scale table, so a difference between
-              them would indicate an undisclosed conversion step rather than quantisation noise —
-              a separate finding class,{' '}
+            <Callout label="Separate finding class">
+              Both INT8 builds were produced from the same scale table, so a difference between them
+              would indicate an undisclosed conversion step rather than quantisation noise —{' '}
               <span className="id">converter_provenance_mismatch</span>. It did not fire.
-            </p>
+            </Callout>
           </div>
         </div>
       </Section>

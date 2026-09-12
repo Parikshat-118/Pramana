@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {
-  PageHead, Section, Sub, Status, Metrics, Metric, DL, Ev, Bar, Notice, Toolbar, Term, pct,
+  PageHead, Section, Block, Status, Metrics, Metric, DL, Ev, Bar, Callout, Toolbar, Term, pct,
 } from './ui.jsx'
 import { report } from '../data/report.js'
 
@@ -45,13 +45,12 @@ export default function Certificate() {
         meta={<>12-partition run-off ensemble · basis <span className="id">contract_lot</span> · evaluation set <span className="id">gtsrb-holdout-n4410</span></>}
       />
 
-      <Notice>
-        <b>Scope.</b> This is a property of the voting ensemble built for the measurement. It is
-        not a statement about the delivered model and does not become one — the guarantee and the
-        precision-ladder result concern different objects and do not compose. The schema carries
-        the exclusions as a field:{' '}
+      <Callout label="Scope of this measurement">
+        A property of the voting ensemble built for the measurement, not of the delivered model.
+        The guarantee and the precision-ladder result concern different objects and do not
+        compose. Exclusions carried as a field:{' '}
         <span className="id">{SCM.scope_excludes.join(', ')}</span>.
-      </Notice>
+      </Callout>
 
       <Toolbar hint="Contract structure changes the guarantee. It is not a property of the model alone.">
         <div className="btn-group">
@@ -92,25 +91,22 @@ export default function Certificate() {
       </Metrics>
 
       {withheld ? (
-        <Notice kind="crit">
-          <b>Certificate withheld — one supplier holds a majority of the corpus.</b> The largest lot
-          is {pct(largest, 0)} of the data, past the{' '}
-          {pct(SCM.volume_inequality.degenerate_threshold, 0)} threshold. A guarantee reading
-          &ldquo;unchanged unless one supplier is compromised&rdquo; is worth nothing when that
-          supplier is most of the corpus. Refused outright rather than issued with a caveat; the
-          remedy is to re-let the contract.
-        </Notice>
+        <Callout kind="crit" label="Certificate withheld · single lot majority">
+          The largest lot is {pct(largest, 0)} of the corpus, past the{' '}
+          {pct(SCM.volume_inequality.degenerate_threshold, 0)} threshold. Refused outright rather
+          than issued with a caveat — the remedy is to re-let the contract, not to find a more
+          forgiving statistic.
+        </Callout>
       ) : sc === 'merged' ? (
-        <Notice kind="warn">
-          <b>Two lots share a parent company and cannot fail independently.</b> The floor drops from
-          3 to 2. How the corpus is partitioned is a procurement choice, so the guarantee can be
-          designed for rather than discovered.
-        </Notice>
+        <Callout kind="warn" label="Floor reduced · shared parent company">
+          Two lots cannot fail independently, so the floor drops from 3 to 2. How the corpus is
+          partitioned is a procurement choice, which means the guarantee can be designed for.
+        </Callout>
       ) : (
-        <Notice kind="ok">
-          <b>Per-prediction guarantee.</b> For a certified input, the label this ensemble votes for
-          is unchanged under arbitrary corruption of any <b>{S.k - 1}</b> contracted lots.
-        </Notice>
+        <Callout kind="ok" label="Per-prediction guarantee">
+          For a certified input, the label this ensemble votes for is unchanged under arbitrary
+          corruption of any <b>{S.k - 1}</b> contracted lots.
+        </Callout>
       )}
 
       <Section
@@ -150,13 +146,13 @@ export default function Certificate() {
             </table>
           </div>
           <div>
-            <Sub title="Volume checks">
+            <Block title="Volume checks">
               <Ev label="Shares sum" value={`${sum.toFixed(2)} = 1.00`} tone="ok" />
               <Ev label="Largest single lot" value={pct(largest, 0)} tone={withheld ? 'crit' : undefined} />
               <Ev label="Degenerate threshold" value={pct(SCM.volume_inequality.degenerate_threshold, 0)} />
               <Ev label="k is a count, not a volume" value="true" note="Which is why the share is printed beside it" />
-            </Sub>
-            <Sub title="Pairing enforced at build">
+            </Block>
+            <Block title="Pairing enforced at build">
               <p className="section-note">
                 <span className="id">certified_floor_k</span> is rejected by the validator unless
                 both companions are present in the same object, which is what makes the figure
@@ -166,7 +162,7 @@ export default function Certificate() {
                 ['certified_fraction_at_k', <Status kind="ok">present</Status>],
                 ['surrogate_gap_top1', <Status kind="ok">present</Status>],
               ]} />
-            </Sub>
+            </Block>
           </div>
         </div>
       </Section>
@@ -188,12 +184,11 @@ export default function Certificate() {
               <Term id="floork">certified_floor_k</Term> is how many would have to be compromised
               at once before the vote could change.
             </p>
-            <Notice>
-              The sample-denominated figure is reported side by side and it is the{' '}
-              <b>tighter</b> bound: a partition aligned to contract lots is strictly weaker in
-              sample units than a random one. A weaker bound in a usable unit is the trade being
-              made, and both numbers are visible while it is made.
-            </Notice>
+            <Callout label="Trade recorded, not hidden">
+              The sample-denominated figure is the <b>tighter</b> bound: a partition aligned to
+              contract lots is strictly weaker in sample units than a random one. Both numbers are
+              reported side by side.
+            </Callout>
             <p className="section-note" style={{ marginBottom: 0 }}>
               If two suppliers deliver the same images their models are not independent and the
               vote is worth less than it appears, so <Term id="purity">purity</Term> is measured,

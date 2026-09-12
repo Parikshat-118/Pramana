@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {
-  PageHead, Section, Sub, Status, Metrics, Metric, DL, Ev, Notice, Toolbar, Ref, Term, Legend,
+  PageHead, Section, Block, Status, Metrics, Metric, DL, Ev, Callout, Toolbar, Ref, Term, Legend,
 } from './ui.jsx'
 import { report, ledgerEntries } from '../data/report.js'
 
@@ -63,18 +63,17 @@ export default function Ledger() {
       </Metrics>
 
       {tampered !== null && (
-        <Notice kind="crit">
-          <b>Row 88213 was altered — the row recording finding F-1.</b> Local chain verification
-          fails from that row forward, which a certifier could have suppressed by recomputing the
-          whole chain. The same row is then checked against the timestamp token obtained{' '}
-          <b>before</b> the edit, and that check fails too — on a digest whose signing key the
-          certifier does not hold and therefore cannot re-issue.
-        </Notice>
+        <Callout kind="crit" label="Row 88213 altered · both checks failed">
+          Local chain verification fails from that row forward — which a certifier could have
+          suppressed by recomputing the whole chain. The same row is then checked against the
+          timestamp token obtained <b>before</b> the edit, and that fails too, on a digest whose
+          signing key the certifier does not hold and cannot re-issue.
+        </Callout>
       )}
 
       <Section title="Verification">
         <div className="cols cols-2">
-          <Sub
+          <Block
             title="Check 1 — local chain"
             meta={tampered !== null ? 'failed' : 'verified'}
           >
@@ -87,7 +86,7 @@ export default function Ledger() {
               ['Chain position', <span className="id">{report.ledger.chain_position}</span>],
               ['Previous digest', <Ref value={report.ledger.prev_digest}>{report.ledger.prev_digest}</Ref>],
               ['Merkle root', tampered !== null
-                ? <span className="id" style={{ color: 'var(--crit)' }}>{ALTERED}</span>
+                ? <span className="id" style={{ color: 'var(--cr)' }}>{ALTERED}</span>
                 : <Ref value={report.ledger.merkle_root}>{report.ledger.merkle_root}</Ref>],
               ['Signature algorithm', <span className="id">{report.signature.alg}</span>],
             ]} />
@@ -95,9 +94,9 @@ export default function Ledger() {
               Run by the certifier on the certifier's own data. Alone it proves nothing to anybody
               else.
             </p>
-          </Sub>
+          </Block>
 
-          <Sub
+          <Block
             title="Check 2 — independent timestamp"
             meta={tampered !== null ? 'failed' : 'anchored'}
           >
@@ -118,7 +117,7 @@ export default function Ledger() {
               does not have, which is what makes this the one check that does not rest on trusting
               the certifier.
             </p>
-          </Sub>
+          </Block>
         </div>
       </Section>
 
@@ -157,14 +156,14 @@ export default function Ledger() {
             })}
             <hr className="r" />
             <Legend items={[
-              ['var(--bg-alt)', 'committed before receipt'],
-              ['var(--ok-bg)', 'verified'],
-              ['var(--crit)', 'digest mismatch'],
+              ['var(--fg-mute)', 'committed before receipt'],
+              ['var(--ok-solid)', 'verified'],
+              ['var(--cr)', 'digest mismatch'],
             ]} />
           </div>
 
           <div>
-            <Sub title="Pre-commitment" meta="before receipt">
+            <Block title="Pre-commitment" meta="before receipt">
               <DL rows={[
                 ['Committed at', <span className="id">{report.battery.committed_at_utc}</span>],
                 ['Before artefact receipt', <Status kind="ok">true</Status>],
@@ -180,9 +179,9 @@ export default function Ledger() {
                 the accused party cannot check is not evidence.{' '}
                 <Term id="precommit">Pre-commitment</Term> is what makes that possible.
               </p>
-            </Sub>
+            </Block>
 
-            <Sub title="Stated limits">
+            <Block title="Stated limits">
               <Ev label="Defeats" value={<Status kind="ok">yes</Status>}
                 note={A.defeats[0]} />
               <Ev label="Does not defeat" value={<Status kind="crit">no</Status>}
@@ -192,7 +191,7 @@ export default function Ledger() {
                 version of what a distributed ledger is usually claimed to provide. Both fields are
                 in the emitted report, not only on this screen.
               </p>
-            </Sub>
+            </Block>
           </div>
         </div>
       </Section>

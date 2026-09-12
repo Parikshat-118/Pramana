@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import {
-  PageHead, Section, Sub, Status, Metrics, Metric, DL, Ev, Bar, Notice, Toolbar, Term, pct,
+  PageHead, Section, Block, Status, Metrics, Metric, DL, Ev, Bar, Callout, Toolbar, Term, pct,
 } from './ui.jsx'
 import { report, lots } from '../data/report.js'
 
@@ -111,7 +111,7 @@ export default function Contributors() {
                         tone={rep ? 'warn' : 'neutral'}
                       />
                     </td>
-                    <td className="t-num" style={{ color: rep ? 'var(--warn)' : undefined, fontWeight: rep ? 600 : 400 }}>
+                    <td className="t-num" style={{ color: rep ? 'var(--wn-solid)' : undefined, fontWeight: rep ? 650 : 400 }}>
                       {l.eValue.toFixed(1)}
                     </td>
                     <td className="t-num mute">{threshold.toFixed(0)}</td>
@@ -132,27 +132,24 @@ export default function Contributors() {
         <div className="cols cols-2">
           <div>
             {lot04Reported ? (
-              <Notice>
-                <b>At α = {alpha.toFixed(2)}, lot-04 is reported.</b> Its score of {lot04.eValue} did
-                not change; the threshold moved to {threshold.toFixed(0)} because a higher share of
-                false reports was accepted. The error rate that bought the change is printed beside
-                the result.
-              </Notice>
+              <Callout label={`lot-04 now reported at α = ${alpha.toFixed(2)}`}>
+                Its score of {lot04.eValue} did not change. The threshold moved to{' '}
+                {threshold.toFixed(0)} because a higher share of false reports was accepted, and
+                that error rate is printed beside the result.
+              </Callout>
             ) : (
-              <Notice>
-                <b>lot-04 holds the second-highest score and is not reported.</b> At α ={' '}
-                {alpha.toFixed(2)} it scores {lot04.eValue} against a threshold of{' '}
-                {threshold.toFixed(0)}. Elevated is not a finding.
-              </Notice>
+              <Callout label="Second-highest score, not reported">
+                lot-04 scores {lot04.eValue} against a threshold of {threshold.toFixed(0)} at α ={' '}
+                {alpha.toFixed(2)}. Elevated is not a finding.
+              </Callout>
             )}
-            <Notice kind="warn">
-              <b>What is reported is reported as indicative.</b> source-07 cleared the threshold, so
-              it is statistically flagged at the declared error rate and causally unverified —
-              confirming cause requires retraining without that shard, which needs pipeline access
-              above this assessment depth.
-            </Notice>
+            <Callout kind="warn" label="Ceiling on this claim · indicative">
+              source-07 cleared the threshold, so it is statistically flagged at the declared error
+              rate and causally unverified. Confirming cause requires retraining without that
+              shard, which needs pipeline access above this assessment depth.
+            </Callout>
           </div>
-          <Sub title="F-2 as recorded" meta="α = 0.05">
+          <Block title="F-2 as recorded" meta="α = 0.05">
             <DL rows={[
               ['Statistic', <span className="id">e_value_merged</span>],
               ['Value', <span className="id">312.0</span>],
@@ -163,7 +160,7 @@ export default function Contributors() {
               ['Attribution mode', <span className="id">set_valued</span>],
               ['Containment scope', <span className="id">lot-07</span>],
             ]} />
-          </Sub>
+          </Block>
         </div>
       </Section>
 
@@ -187,13 +184,11 @@ export default function Contributors() {
             </table>
           </div>
           <div>
-            <Notice>
-              <b>One detector carries a precondition, and the console prints it.</b> The
-              out-of-distribution detector compares against a backbone trained on other data, and
-              that data must be disjoint from the shards assessed, or the reference is contaminated
-              by the attack it is looking for. A violation returns{' '}
+            <Callout label="Precondition on the OOD detector">
+              Its backbone corpus must be disjoint from the shards assessed, or the reference is
+              contaminated by the attack it is looking for. A violation returns{' '}
               <span className="id">assessment_unavailable: backbone_corpus_contaminated</span>.
-            </Notice>
+            </Callout>
             <DL rows={[
               ['Backbone disjoint from shards', <Status kind="ok">true</Status>],
               ['Pinned to battery generation', <span className="id">7</span>],
@@ -219,7 +214,7 @@ export default function Contributors() {
             <Ev label="Verdict" value="manipulation indicated" tone="warn"
               note={`Evidence strength: ${D.evidence_strength}`} />
           </div>
-          <Sub title="Demoted to corroborating only">
+          <Block title="Demoted to corroborating only">
             <div className="table-wrap">
               <table>
                 <thead>
@@ -242,7 +237,7 @@ export default function Contributors() {
               sharpening move a spectral band ratio for benign reasons. Neither may carry a
               decision, and the emitted report names them in a field.
             </p>
-          </Sub>
+          </Block>
         </div>
       </Section>
     </>

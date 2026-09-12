@@ -15,8 +15,8 @@ export function PageHead({ title, subtitle, meta }) {
 
 /* ---------------------------------------------------------------- section --- */
 
-/** A rule-separated region. Sections do not nest and do not draw cards. */
-export function Section({ title, meta, actions, note, children }) {
+/** One surface level. Sections are the card; nothing inside a section is a card. */
+export function Section({ title, meta, actions, note, flush, children }) {
   return (
     <section className="section">
       <div className="section-head">
@@ -25,18 +25,20 @@ export function Section({ title, meta, actions, note, children }) {
         <div className="section-spacer" />
         {actions}
       </div>
-      {note && <p className="section-note">{note}</p>}
-      {children}
+      <div className={`section-body${flush ? ' flush' : ''}`}>
+        {note && <p className="section-note">{note}</p>}
+        {children}
+      </div>
     </section>
   )
 }
 
-/** A labelled block inside a section column — underline only, no container. */
-export function Sub({ title, meta, children }) {
+/** A labelled block inside a section — underline only, never a nested card. */
+export function Block({ title, meta, children }) {
   return (
-    <div className="sub">
+    <div className="block">
       {title && (
-        <div className="sub-head">
+        <div className="block-head">
           <span>{title}</span>
           {meta && <span className="section-meta">{meta}</span>}
         </div>
@@ -46,9 +48,51 @@ export function Sub({ title, meta, children }) {
   )
 }
 
+/* ------------------------------------------------------------ finding rec --- */
+
+/**
+ * A finding is a record, not a paragraph: severity, identifier, subject, asset,
+ * then the figures that support it.
+ */
+export function Finding({ severity = 'warn', label, id, title, asset, children }) {
+  const sevLabel = label ?? { crit: 'critical', warn: 'high', ok: 'info' }[severity]
+  return (
+    <div className={`finding ${severity}`}>
+      <div className="finding-head">
+        <span className={`sev ${severity}`}>{sevLabel}</span>
+        {id && <span className="finding-id">{id}</span>}
+        <h3 className="finding-title">{title}</h3>
+        <div className="section-spacer" />
+        {asset && <span className="finding-asset id">{asset}</span>}
+      </div>
+      <div className="finding-body">{children}</div>
+    </div>
+  )
+}
+
+/* ----------------------------------------------------------------- figures --- */
+
+export function Figures({ children }) {
+  return <div className="figures">{children}</div>
+}
+
+/** A figure with its denominator typeset separately, plus the comparison it meets. */
+export function Figure({ value, denom, label, sub, tone, sm }) {
+  return (
+    <div className="figure">
+      <div className={`fig${tone ? ' ' + tone : ''}`}>
+        <span className={`fig-n${sm ? ' sm' : ''}`}>{value}</span>
+        {denom != null && <span className="fig-d">/{denom}</span>}
+      </div>
+      <div className="figure-label">{label}</div>
+      {sub && <div className="figure-sub">{sub}</div>}
+    </div>
+  )
+}
+
 /* ----------------------------------------------------------------- status --- */
 
-/** Use only for an actual state. `kind`: ok | warn | crit | neutral | quiet */
+/** Use only for an actual state. kind: ok | warn | crit | neutral | quiet */
 export function Status({ kind = 'neutral', strike, children }) {
   return <span className={`st ${kind}${strike ? ' strike' : ''}`}>{children}</span>
 }
@@ -103,10 +147,16 @@ export function Ev({ label, value, tone, lg, note }) {
   )
 }
 
-/* ----------------------------------------------------------------- notice --- */
+/* ---------------------------------------------------------------- callout --- */
 
-export function Notice({ kind, children }) {
-  return <div className={`notice${kind ? ' ' + kind : ''}`}>{children}</div>
+/** A labelled technical note. The label carries the meaning; the body stays short. */
+export function Callout({ kind, label, children }) {
+  return (
+    <div className={`callout${kind ? ' ' + kind : ''}`}>
+      {label && <span className="callout-label">{label}</span>}
+      <div className="callout-body">{children}</div>
+    </div>
+  )
 }
 
 /* ---------------------------------------------------------------- toolbar --- */
@@ -168,7 +218,7 @@ export function Ref({ value, children }) {
 
 /* ------------------------------------------------------------------- term --- */
 
-/** Hover definition for vocabulary that a reviewer may not share. */
+/** Hover definition for vocabulary a reviewer may not share. */
 export function Term({ id, children }) {
   const entry = glossary[id]
   const [pos, setPos] = useState(null)
@@ -216,5 +266,47 @@ export function Legend({ items }) {
         </span>
       ))}
     </div>
+  )
+}
+
+/** Shared 200-probe bank view. Diverging indices are fixed, not sampled. */
+export const HOT_PROBES = [7, 23, 31, 58, 74, 96, 112, 133, 151, 178, 194]
+
+export function Probes({ diverging, total = 200, strip }) {
+  const hot = new Set(HOT_PROBES.slice(0, diverging))
+  return (
+    <div className={`probes${strip ? ' strip' : ''}`}>
+      {Array.from({ length: total }, (_, i) => (
+        <i key={i} className={hot.has(i) ? 'hit' : undefined} />
+      ))}
+    </div>
+  )
+}
+
+/** Per-class divergence chart. `sm` renders the compact inline variant. */
+export function DivergenceChart({ data, sm, axis }) {
+  const max = Math.max(...data.map(d => d.divergence), 0.05)
+  return (
+    <>
+      <div className={`chart${sm ? ' sm' : ''}`}>
+        {data.map(d => (
+          <div className="chart-col" key={d.cls}
+            title={`Class ${d.cls} — ${d.name}\nDivergence ${d.divergence.toFixed(3)}`}>
+            <i
+              className={d.divergence >= 0.3 ? 'hi' : d.divergence >= 0.1 ? 'mid' : undefined}
+              style={{ height: `${(d.divergence / max) * 100}%` }}
+            />
+            {!sm && d.divergence >= 0.3 && <span className="chart-tag">{d.cls}</span>}
+          </div>
+        ))}
+      </div>
+      {axis && (
+        <div className="chart-axis">
+          <span className="id">cls 0</span>
+          <span>43 output classes</span>
+          <span className="id">cls 42</span>
+        </div>
+      )}
+    </>
   )
 }

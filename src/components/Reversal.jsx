@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {
-  PageHead, Section, Sub, Status, Metrics, Metric, DL, Ev, Bar, Notice, Toolbar, Ref, Term, Legend, pct,
+  PageHead, Section, Block, Status, Metrics, Metric, DL, Ev, Bar, Callout, Toolbar, Ref, Term, Legend, pct,
 } from './ui.jsx'
 import { report } from '../data/report.js'
 
@@ -53,11 +53,10 @@ export default function Reversal() {
         />
       </Metrics>
 
-      <Notice kind="warn">
-        <b>Same search, same class, two precisions, opposite results.</b> A backdoor that activates
-        only after conversion is invisible to any assessment of the delivered file, so the search
-        runs at the precision that deploys.
-      </Notice>
+      <Callout kind="warn" label="Same search · same class · opposite results">
+        A backdoor that activates only after conversion is invisible to any assessment of the
+        delivered file, so the search runs at the precision that deploys.
+      </Callout>
 
       <Section title="Result by rung">
         <div className="table-wrap">
@@ -141,7 +140,7 @@ export default function Reversal() {
           </div>
 
           <div>
-            <Sub title="Surrogate gate" meta="passed">
+            <Block title="Surrogate gate" meta="passed">
               <p className="section-note">
                 An INT8 graph exposes no gradients, so the search runs on a differentiable
                 stand-in built from the delivered scale table. Evidence is then taken off the real
@@ -165,9 +164,9 @@ export default function Reversal() {
                 <span className="id">assessment_unavailable: surrogate_not_faithful</span> and no
                 finding would have been recorded.
               </p>
-            </Sub>
+            </Block>
 
-            <Sub title="Finding F-1" meta="corroborated">
+            <Block title="Finding F-1" meta="corroborated">
               <DL rows={[
                 ['Mechanism', <span className="id">{F1.mechanism}</span>],
                 ['Rung', <span className="id">{F1.rung}</span>],
@@ -179,13 +178,13 @@ export default function Reversal() {
                 ['Containment scope', <span className="id">{F1.containment_scope.join(', ')}</span>],
                 ['Scale table', <Ref value={S.scale_table_digest}>{S.scale_table_digest}</Ref>],
               ]} />
-              <Notice>
-                <b>The set has one member and is still not an accusation.</b> Naming a single
-                supplier requires <Term id="strength">causal verification</Term> — retraining
-                without that shard and watching the effect disappear. This finding is corroborated,
-                so the attribution stays <Term id="setvalued">set-valued</Term>.
-              </Notice>
-            </Sub>
+              <Callout label="Attribution ceiling · set of one">
+                Naming a single supplier requires{' '}
+                <Term id="strength">causal verification</Term> — retraining without that shard and
+                watching the effect disappear. This finding is corroborated, so the attribution
+                stays <Term id="setvalued">set-valued</Term>.
+              </Callout>
+            </Block>
           </div>
         </div>
       </Section>
