@@ -111,9 +111,22 @@ code { font-family: var(--mono); font-size: 0.9em; color: var(--fg-body); }
   cursor: pointer;
   user-select: none;
 }
-.brand:hover .brand-name { color: var(--ac-bright); }
-.brand-name { font-size: 16px; font-weight: 700; letter-spacing: 0.16em; color: #fff; }
-.brand-dev { font-size: 14px; color: var(--rail-fg-dim); }
+.brand:hover .brand-name,
+.brand:hover .brand-dev {
+  color: var(--ac-bright);
+}
+.brand-name {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #fff;
+  transition: color 0.15s ease;
+}
+.brand-dev {
+  font-size: 14px;
+  color: var(--rail-fg-dim);
+  transition: color 0.15s ease;
+}
 
 .brand-line {
   padding: 16px 22px;
