@@ -104,9 +104,9 @@ export default function App() {
           <div className="topbar-spacer" />
           <span className="topbar-id">{report.report_id}</span>
           <div className="topbar-states">
-            <Status kind="quiet">T{report.assessment.tier.slice(1)} · training data</Status>
+            <Status kind="neutral">T{report.assessment.tier.slice(1)} · training data</Status>
             <Status kind="ok">Ed25519 signed</Status>
-            <Status chip kind={quarantined ? 'crit' : 'warn'}>
+            <Status kind={quarantined ? 'crit' : 'warn'}>
               {dispositionState.replace(/_/g, ' ')}
             </Status>
           </div>
