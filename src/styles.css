@@ -195,6 +195,20 @@ code { font-family: var(--mono); font-size: 0.9em; color: var(--fg-body); }
 .topbar-spacer { flex: 1; }
 .topbar-id { font-family: var(--mono); font-size: 12.5px; color: var(--fg-mute); }
 .topbar-states { display: flex; align-items: center; gap: 8px; }
+.topbar-sep {
+  color: var(--fg-dim); font-size: 13px; user-select: none;
+}
+.topbar-tag {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--fg-mute); white-space: nowrap;
+}
+.topbar-tag--crit { color: var(--cr); }
+.topbar-clock {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 600;
+  letter-spacing: 0.04em; color: var(--fg-mute); white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
 
 .content { padding: 32px 36px 64px; max-width: 1240px; width: 100%; }
 

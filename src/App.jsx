@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { report } from './data/report.js'
-import { Status } from './components/ui.jsx'
 import Overview from './components/Overview.jsx'
 import Ladder from './components/Ladder.jsx'
 import Reversal from './components/Reversal.jsx'
@@ -25,6 +24,18 @@ const SCREENS = [
 function groupOf(index) {
   for (let i = index; i >= 0; i--) if (SCREENS[i].group) return SCREENS[i].group
   return ''
+}
+
+function LiveClock() {
+  const [now, setNow] = useState(new Date())
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(id)
+  }, [])
+  const hh = String(now.getHours()).padStart(2, '0')
+  const mm = String(now.getMinutes()).padStart(2, '0')
+  const ss = String(now.getSeconds()).padStart(2, '0')
+  return <span className="topbar-clock">{hh}:{mm}:{ss} IST</span>
 }
 
 export default function App() {
@@ -65,7 +76,7 @@ export default function App() {
   return (
     <div className="app">
       <aside className="sidebar">
-        <div className="brand">
+        <div className="brand" onClick={() => go('overview')} style={{ cursor: 'pointer' }}>
           <span className="brand-name">PRAMANA</span>
           <span className="brand-dev">प्रमाण</span>
         </div>
@@ -103,13 +114,16 @@ export default function App() {
           </span>
           <div className="topbar-spacer" />
           <span className="topbar-id">{report.report_id}</span>
-          <div className="topbar-states">
-            <Status kind="neutral">T{report.assessment.tier.slice(1)} · training data</Status>
-            <Status kind="ok">Ed25519 signed</Status>
-            <Status kind={quarantined ? 'crit' : 'warn'}>
-              {dispositionState.replace(/_/g, ' ')}
-            </Status>
-          </div>
+          <span className="topbar-sep">·</span>
+          <span className="topbar-tag">T{report.assessment.tier.slice(1)} · training data</span>
+          <span className="topbar-sep">·</span>
+          <span className="topbar-tag">Ed25519 signed</span>
+          <span className="topbar-sep">·</span>
+          <span className={`topbar-tag${quarantined ? ' topbar-tag--crit' : ''}`}>
+            {dispositionState.replace(/_/g, ' ')}
+          </span>
+          <span className="topbar-sep">·</span>
+          <LiveClock />
         </div>
 
         <div className="content">
