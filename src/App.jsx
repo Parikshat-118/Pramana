@@ -117,7 +117,7 @@ export default function App() {
           <span className="topbar-sep">·</span>
           <span className="topbar-tag">T{report.assessment.tier.slice(1)} · training data</span>
           <span className="topbar-sep">·</span>
-          <span className="topbar-tag">Ed25519 signed</span>
+          <span className="topbar-tag">Parikshat signed_in</span>
           <span className="topbar-sep">·</span>
           <span className={`topbar-tag${quarantined ? ' topbar-tag--crit' : ''}`}>
             {dispositionState.replace(/_/g, ' ')}
